@@ -90,9 +90,24 @@ describe('Simplereach', function() {
       analytics.initialize();
       analytics.page();
     });
+
     it('SimpleReach SPR should exist', function() {
       analytics.page({ path: '/path', title: 'title' });
       analytics.assert(typeof window.SPR.collect === 'function');
+    });
+
+    describe('#page', function() {
+      beforeEach(function() {
+        analytics.stub(window.SPR, 'collect');
+      });
+
+      it('should send a page view', function() {
+        var title = document.title;
+        analytics.page();
+        analytics.equal(window.__reach_config.url, 'http://mygreatreachtestsite.com/ogurl.html');
+        analytics.equal(window.__reach_config.title, title);
+        analytics.called(window.SPR.collect);
+      });
     });
   });
 });
