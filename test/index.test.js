@@ -3,7 +3,7 @@ var Analytics = require('analytics.js-core').constructor;
 var integration = require('analytics.js-integration');
 var sandbox = require('clear-env');
 var tester = require('analytics.js-integration-tester');
-var Simplereach = require('../lib/');
+var SimpleReach = require('../lib/');
 
 describe('Simplereach', function() {
   var analytics;
@@ -14,8 +14,8 @@ describe('Simplereach', function() {
 
   beforeEach(function() {
     analytics = new Analytics();
-    simplereach = new Simplereach(options);
-    analytics.use(Simplereach);
+    simplereach = new SimpleReach(options);
+    analytics.use(SimpleReach);
     analytics.use(tester);
     analytics.add(simplereach);
   });
@@ -28,10 +28,10 @@ describe('Simplereach', function() {
   });
 
   it('should have the right settings', function() {
-    analytics.compare(Simplereach, integration('Simplereach')
+    analytics.compare(SimpleReach, integration('SimpleReach')
       .global('SPR')
       .global('__reach_config')
-      .option('pid', '000000000000000000000000'));
+      .option('pid', ''));
   });
 
   describe('before loading', function() {
