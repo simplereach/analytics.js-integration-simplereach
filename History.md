@@ -1,4 +1,9 @@
 
+1.0.4 / 2015-08-20
+==================
+
+  * override default `__reach_config.url` property of `false`
+
 1.0.3 / 2015-08-19
 ==================
   
