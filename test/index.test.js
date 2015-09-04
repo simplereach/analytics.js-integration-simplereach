@@ -135,7 +135,7 @@ describe('Simplereach', function() {
           ctx_order_id: orderId
         });
       });
-      it('should send collect when the order id is missing', function() {
+      it('should not send collect when the order id is missing', function() {
         var revenue = 25;
 
         analytics.track('Completed Order', {
