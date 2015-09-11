@@ -109,6 +109,42 @@ describe('Simplereach', function() {
         analytics.called(window.SPR.collect);
       });
     });
+
+    describe('#track', function() {
+      beforeEach(function() {
+        analytics.stub(window.SPR, 'collect');
+      });
+
+      it('should send collect when there is revenue and an order ID', function() {
+        var title = document.title;
+        var orderId = '50314b8e9bcf000000000000';
+        var revenue = 25;
+
+        analytics.track('Completed Order', {
+          orderId: orderId,
+          revenue: revenue,
+          title: title
+        });
+
+        analytics.called(window.SPR.collect, {
+          pid: options.pid,
+          reach_tracking: false,
+          url: 'http://mygreatreachtestsite.com/ogurl.html',
+          title: title,
+          ctx_revenue: revenue,
+          ctx_order_id: orderId
+        });
+      });
+      it('should not send collect when the order id is missing', function() {
+        var revenue = 25;
+
+        analytics.track('Completed Order', {
+          revenue: revenue
+        });
+
+        analytics.didNotCall(window.SPR.collect);
+      });
+    });
   });
 });
 
