@@ -118,7 +118,7 @@ describe('Simplereach', function() {
       var title = document.title;
       var orderId = '50314b8e9bcf000000000000';
       var revenue = 25;
-      var eventType = 'Completed Order';
+      var eventName = 'Completed Order';
 
       it('should send collect with a random event type', function() {
 
@@ -135,7 +135,7 @@ describe('Simplereach', function() {
           title: title,
           ctx_revenue: revenue,
           ctx_order_id: orderId,
-          ctx_event_type: 'My Event Name is Test'
+          ctx_event_name: 'My Event Name is Test'
         });
       });
 
@@ -154,7 +154,7 @@ describe('Simplereach', function() {
           title: title,
           ctx_revenue: revenue,
           ctx_order_id: orderId,
-          ctx_event_type: eventType
+          ctx_event_name: eventName
         });
       });
 
@@ -170,7 +170,7 @@ describe('Simplereach', function() {
           title: title,
           ctx_revenue: null,
           ctx_order_id: null,
-          ctx_event_type: eventType
+          ctx_event_name: eventName
         });
       });
 
@@ -187,7 +187,7 @@ describe('Simplereach', function() {
           title: title,
           ctx_revenue: revenue,
           ctx_order_id: null,
-          ctx_event_type: eventType
+          ctx_event_name: eventName
         });
       });
 
@@ -204,7 +204,7 @@ describe('Simplereach', function() {
           title: title,
           ctx_revenue: null,
           ctx_order_id: orderId,
-          ctx_event_type: eventType
+          ctx_event_name: eventName
         });
       });
     });
