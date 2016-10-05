@@ -115,96 +115,90 @@ describe('Simplereach', function() {
       beforeEach(function() {
         analytics.stub(window.SPR, 'collect');
       });
-      var title = document.title;
-      var orderId = '50314b8e9bcf000000000000';
-      var revenue = 25;
-      var eventName = 'Completed Order';
 
-      it('should send collect with a random event type', function() {
-
+      it('should send collect with a random event name', function() {
         analytics.track('My Event Name is Test', {
-          orderId: orderId,
-          revenue: revenue,
-          title: title
+          orderId: '50314b8e9bcf000000000000',
+          revenue: 25,
+          title: document.title
         });
 
         analytics.called(window.SPR.collect, {
           pid: options.pid,
           reach_tracking: false,
           url: 'http://mygreatreachtestsite.com/ogurl.html',
-          title: title,
-          ctx_revenue: revenue,
-          ctx_order_id: orderId,
+          title: document.title,
+          ctx_revenue: 25,
+          ctx_order_id: '50314b8e9bcf000000000000',
           ctx_event_name: 'My Event Name is Test'
         });
       });
 
       it('should send collect when there is revenue and an order ID', function() {
-
         analytics.track('Completed Order', {
-          orderId: orderId,
-          revenue: revenue,
-          title: title
+          orderId: '50314b8e9bcf000000000000',
+          revenue: 25,
+          title: document.title
         });
 
         analytics.called(window.SPR.collect, {
           pid: options.pid,
           reach_tracking: false,
           url: 'http://mygreatreachtestsite.com/ogurl.html',
-          title: title,
-          ctx_revenue: revenue,
-          ctx_order_id: orderId,
-          ctx_event_name: eventName
+          title: document.title,
+          ctx_revenue: 25,
+          ctx_order_id: '50314b8e9bcf000000000000',
+          ctx_event_name: 'Completed Order'
         });
       });
 
-      it('should send collect with order id and revenue null when the order id and revenue are missing', function() {
+      it('should send collect without order id and revenue', function() {
         analytics.track('Completed Order', {
-          title: title
+          title: document.title
         });
 
         analytics.called(window.SPR.collect, {
           pid: options.pid,
           reach_tracking: false,
           url: 'http://mygreatreachtestsite.com/ogurl.html',
-          title: title,
-          ctx_revenue: null,
-          ctx_order_id: null,
-          ctx_event_name: eventName
+          title: document.title,
+          ctx_revenue: undefined,
+          ctx_order_id: undefined,
+          ctx_event_name: 'Completed Order'
         });
       });
 
-      it('should send collect with order id null when the order id is missing', function() {
+      it('should send collect without order id', function() {
         analytics.track('Completed Order', {
-          revenue: revenue,
-          title: title
+          revenue: 25,
+          title: document.title
         });
 
         analytics.called(window.SPR.collect, {
           pid: options.pid,
           reach_tracking: false,
           url: 'http://mygreatreachtestsite.com/ogurl.html',
-          title: title,
-          ctx_revenue: revenue,
-          ctx_order_id: null,
-          ctx_event_name: eventName
+          title: document.title,
+          ctx_revenue: 25,
+          ctx_order_id: undefined,
+          ctx_event_name: 'Completed Order'
         });
       });
 
-      it('should send collect with revenue null when the revenue is missing', function() {
+      it('should send collect without revenue', function() {
         analytics.track('Completed Order', {
-          orderId: orderId,
-          title: title
+          orderId: '50314b8e9bcf000000000000',
+          title: document.title
         });
 
         analytics.called(window.SPR.collect, {
           pid: options.pid,
           reach_tracking: false,
           url: 'http://mygreatreachtestsite.com/ogurl.html',
-          title: title,
-          ctx_revenue: null,
-          ctx_order_id: orderId,
-          ctx_event_name: eventName
+          title: document.title,
+          ctx_revenue: undefined,
+          ctx_order_id: '50314b8e9bcf000000000000',
+          ctx_event_name: 'Completed Order'
         });
       });
     });
