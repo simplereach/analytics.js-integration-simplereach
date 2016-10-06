@@ -1,3 +1,14 @@
+
+2.1.1 / 2016-10-06
+==================
+
+  * Just a quick minor update.
+ 
+2.1.0 / 2016-10-06
+==================
+
+  * Now accepts the wonderful name of your track events :)
+
 2.0.0 / 2016-06-21
 ==================
 
