@@ -116,34 +116,90 @@ describe('Simplereach', function() {
         analytics.stub(window.SPR, 'collect');
       });
 
-      it('should send collect when there is revenue and an order ID', function() {
-        var title = document.title;
-        var orderId = '50314b8e9bcf000000000000';
-        var revenue = 25;
-
-        analytics.track('Completed Order', {
-          orderId: orderId,
-          revenue: revenue,
-          title: title
+      it('should send collect with a random event name', function() {
+        analytics.track('My Event Name is Test', {
+          orderId: '50314b8e9bcf000000000000',
+          revenue: 25,
+          title: document.title
         });
 
         analytics.called(window.SPR.collect, {
           pid: options.pid,
           reach_tracking: false,
           url: 'http://mygreatreachtestsite.com/ogurl.html',
-          title: title,
-          ctx_revenue: revenue,
-          ctx_order_id: orderId
+          title: document.title,
+          ctx_revenue: 25,
+          ctx_order_id: '50314b8e9bcf000000000000',
+          ctx_event_name: 'My Event Name is Test'
         });
       });
-      it('should not send collect when the order id is missing', function() {
-        var revenue = 25;
 
+      it('should send collect when there is revenue and an order ID', function() {
         analytics.track('Completed Order', {
-          revenue: revenue
+          orderId: '50314b8e9bcf000000000000',
+          revenue: 25,
+          title: document.title
         });
 
-        analytics.didNotCall(window.SPR.collect);
+        analytics.called(window.SPR.collect, {
+          pid: options.pid,
+          reach_tracking: false,
+          url: 'http://mygreatreachtestsite.com/ogurl.html',
+          title: document.title,
+          ctx_revenue: 25,
+          ctx_order_id: '50314b8e9bcf000000000000',
+          ctx_event_name: 'Completed Order'
+        });
+      });
+
+      it('should send collect without order id and revenue', function() {
+        analytics.track('Completed Order', {
+          title: document.title
+        });
+
+        analytics.called(window.SPR.collect, {
+          pid: options.pid,
+          reach_tracking: false,
+          url: 'http://mygreatreachtestsite.com/ogurl.html',
+          title: document.title,
+          ctx_revenue: undefined,
+          ctx_order_id: undefined,
+          ctx_event_name: 'Completed Order'
+        });
+      });
+
+      it('should send collect without order id', function() {
+        analytics.track('Completed Order', {
+          revenue: 25,
+          title: document.title
+        });
+
+        analytics.called(window.SPR.collect, {
+          pid: options.pid,
+          reach_tracking: false,
+          url: 'http://mygreatreachtestsite.com/ogurl.html',
+          title: document.title,
+          ctx_revenue: 25,
+          ctx_order_id: undefined,
+          ctx_event_name: 'Completed Order'
+        });
+      });
+
+      it('should send collect without revenue', function() {
+        analytics.track('Completed Order', {
+          orderId: '50314b8e9bcf000000000000',
+          title: document.title
+        });
+
+        analytics.called(window.SPR.collect, {
+          pid: options.pid,
+          reach_tracking: false,
+          url: 'http://mygreatreachtestsite.com/ogurl.html',
+          title: document.title,
+          ctx_revenue: undefined,
+          ctx_order_id: '50314b8e9bcf000000000000',
+          ctx_event_name: 'Completed Order'
+        });
       });
     });
   });
