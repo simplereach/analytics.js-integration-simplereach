@@ -69,6 +69,20 @@ describe('Simplereach', function() {
         analytics.page();
         analytics.called(simplereach.load);
       });
+
+      it('should detect fields from the meta when not in config', function() {
+        window.__reach_config = { pid: '12345' };
+
+        analytics.initialize();
+
+        analytics.called(window.SPR.collect, {
+          pid: window.__reach_config.pid,
+          title: document.title,
+          url: 'http://mygreatreachtestsite.com/ogurl.html',
+          date: '2018-02-19',
+          tags: ['$tag1']
+        });
+      });
     });
   });
 
@@ -81,7 +95,7 @@ describe('Simplereach', function() {
       analytics.spy(simplereach, 'load');
       analytics.initialize();
       analytics.page();
-      analytics.loaded('<script src="http://d8rk54i4mohrb.cloudfront.net/js/reach.js">');
+      analytics.loaded('<script src="http://d8rk54i4mohrb.cloudfront.net/reach.js">');
     });
   });
 
