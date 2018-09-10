@@ -43,24 +43,20 @@ describe('Simplereach', function() {
     describe('#initialize', function() {
       it('should create window.__reach_config', function() {
         var expected = {
-          reach_tracking: false,
           pid: '000000000000000000000000'
         };
         analytics.initialize();
-        analytics.page();
         analytics.deepEqual(window.__reach_config, expected);
       });
 
       it('should inherit global window.__reach_config defaults', function() {
         window.__reach_config = { ignore_errors: true, pid: '12345' };
         var expected = {
-          reach_tracking: false,
           ignore_errors: true,
           pid: '12345'
         };
 
         analytics.initialize();
-        analytics.page();
         analytics.deepEqual(window.__reach_config, expected);
       });
 
@@ -68,20 +64,6 @@ describe('Simplereach', function() {
         analytics.initialize();
         analytics.page();
         analytics.called(simplereach.load);
-      });
-
-      it('should detect fields from the meta when not in config', function() {
-        window.__reach_config = { pid: '12345' };
-
-        analytics.initialize();
-
-        analytics.called(window.SPR.collect, {
-          pid: window.__reach_config.pid,
-          title: document.title,
-          url: 'http://mygreatreachtestsite.com/ogurl.html',
-          date: '2018-02-19',
-          tags: ['$tag1']
-        });
       });
     });
   });
@@ -94,8 +76,7 @@ describe('Simplereach', function() {
     it('should load the library', function() {
       analytics.spy(simplereach, 'load');
       analytics.initialize();
-      analytics.page();
-      analytics.loaded('<script src="http://d8rk54i4mohrb.cloudfront.net/reach.js">');
+      analytics.loaded('<script src="http://d8rk54i4mohrb.cloudfront.net/js/reach.js">');
     });
   });
 
@@ -103,12 +84,10 @@ describe('Simplereach', function() {
     beforeEach(function(done) {
       analytics.once('ready', done);
       analytics.initialize();
-      analytics.page();
     });
 
     it('SimpleReach SPR should exist', function() {
-      analytics.page({ path: '/path', title: 'title' });
-      analytics.assert(typeof window.SPR.collect === 'function');
+      analytics.isFunction(window.SPR.collect);
     });
 
     describe('#page', function() {
@@ -117,14 +96,28 @@ describe('Simplereach', function() {
       });
 
       it('should send a page view', function() {
-        var title = document.title;
         analytics.page();
-        analytics.equal(window.__reach_config.url, 'http://mygreatreachtestsite.com/ogurl.html');
-        analytics.equal(window.__reach_config.title, title);
-        // assert this is not called?
-        // analytics.called(window.SPR.collect);
+        analytics.called(window.SPR.collect);
+      });
+
+      // SimpleReach JS should detect url, title, date,
+      // tags, authors, and channels if  not provided
+      it('should detect fields from meta if not present in config', function() {
+        var expected = {
+          pid: window.__reach_config.pid,
+          url: 'http://mygreatreachtestsite.com/ogurl.html',
+          title: document.title,
+          date: '2018-02-19',
+          tags: ['$tag1', '$tag2'],
+          authors: 'Henry David Thoreau',
+          channels: 'nickelodeon'
+        };
+
+        analytics.page();
+
+        var actual = analytics.spies[0].args[0][0];
+        analytics.deepEqual(actual, expected);
       });
     });
   });
 });
-
