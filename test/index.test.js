@@ -43,24 +43,20 @@ describe('Simplereach', function() {
     describe('#initialize', function() {
       it('should create window.__reach_config', function() {
         var expected = {
-          reach_tracking: false,
           pid: '000000000000000000000000'
         };
         analytics.initialize();
-        analytics.page();
         analytics.deepEqual(window.__reach_config, expected);
       });
 
       it('should inherit global window.__reach_config defaults', function() {
         window.__reach_config = { ignore_errors: true, pid: '12345' };
         var expected = {
-          reach_tracking: false,
           ignore_errors: true,
           pid: '12345'
         };
 
         analytics.initialize();
-        analytics.page();
         analytics.deepEqual(window.__reach_config, expected);
       });
 
@@ -80,7 +76,6 @@ describe('Simplereach', function() {
     it('should load the library', function() {
       analytics.spy(simplereach, 'load');
       analytics.initialize();
-      analytics.page();
       analytics.loaded('<script src="http://d8rk54i4mohrb.cloudfront.net/js/reach.js">');
     });
   });
@@ -89,12 +84,10 @@ describe('Simplereach', function() {
     beforeEach(function(done) {
       analytics.once('ready', done);
       analytics.initialize();
-      analytics.page();
     });
 
     it('SimpleReach SPR should exist', function() {
-      analytics.page({ path: '/path', title: 'title' });
-      analytics.assert(typeof window.SPR.collect === 'function');
+      analytics.isFunction(window.SPR.collect);
     });
 
     describe('#page', function() {
@@ -103,105 +96,28 @@ describe('Simplereach', function() {
       });
 
       it('should send a page view', function() {
-        var title = document.title;
         analytics.page();
-        analytics.equal(window.__reach_config.url, 'http://mygreatreachtestsite.com/ogurl.html');
-        analytics.equal(window.__reach_config.title, title);
         analytics.called(window.SPR.collect);
       });
-    });
 
-    describe('#track', function() {
-      beforeEach(function() {
-        analytics.stub(window.SPR, 'collect');
-      });
-
-      it('should send collect with a random event name', function() {
-        analytics.track('My Event Name is Test', {
-          orderId: '50314b8e9bcf000000000000',
-          revenue: 25,
-          title: document.title
-        });
-
-        analytics.called(window.SPR.collect, {
-          pid: options.pid,
-          reach_tracking: false,
+      // SimpleReach JS should detect url, title, date,
+      // tags, authors, and channels if  not provided
+      it('should detect fields from meta if not present in config', function() {
+        var expected = {
+          pid: window.__reach_config.pid,
           url: 'http://mygreatreachtestsite.com/ogurl.html',
           title: document.title,
-          ctx_revenue: 25,
-          ctx_order_id: '50314b8e9bcf000000000000',
-          ctx_event_name: 'My Event Name is Test'
-        });
-      });
+          date: '2018-02-19',
+          tags: ['$tag1', '$tag2'],
+          authors: 'Henry David Thoreau',
+          channels: 'nickelodeon'
+        };
 
-      it('should send collect when there is revenue and an order ID', function() {
-        analytics.track('Completed Order', {
-          orderId: '50314b8e9bcf000000000000',
-          revenue: 25,
-          title: document.title
-        });
+        analytics.page();
 
-        analytics.called(window.SPR.collect, {
-          pid: options.pid,
-          reach_tracking: false,
-          url: 'http://mygreatreachtestsite.com/ogurl.html',
-          title: document.title,
-          ctx_revenue: 25,
-          ctx_order_id: '50314b8e9bcf000000000000',
-          ctx_event_name: 'Completed Order'
-        });
-      });
-
-      it('should send collect without order id and revenue', function() {
-        analytics.track('Completed Order', {
-          title: document.title
-        });
-
-        analytics.called(window.SPR.collect, {
-          pid: options.pid,
-          reach_tracking: false,
-          url: 'http://mygreatreachtestsite.com/ogurl.html',
-          title: document.title,
-          ctx_revenue: undefined,
-          ctx_order_id: undefined,
-          ctx_event_name: 'Completed Order'
-        });
-      });
-
-      it('should send collect without order id', function() {
-        analytics.track('Completed Order', {
-          revenue: 25,
-          title: document.title
-        });
-
-        analytics.called(window.SPR.collect, {
-          pid: options.pid,
-          reach_tracking: false,
-          url: 'http://mygreatreachtestsite.com/ogurl.html',
-          title: document.title,
-          ctx_revenue: 25,
-          ctx_order_id: undefined,
-          ctx_event_name: 'Completed Order'
-        });
-      });
-
-      it('should send collect without revenue', function() {
-        analytics.track('Completed Order', {
-          orderId: '50314b8e9bcf000000000000',
-          title: document.title
-        });
-
-        analytics.called(window.SPR.collect, {
-          pid: options.pid,
-          reach_tracking: false,
-          url: 'http://mygreatreachtestsite.com/ogurl.html',
-          title: document.title,
-          ctx_revenue: undefined,
-          ctx_order_id: '50314b8e9bcf000000000000',
-          ctx_event_name: 'Completed Order'
-        });
+        var actual = analytics.spies[0].args[0][0];
+        analytics.deepEqual(actual, expected);
       });
     });
   });
 });
-
